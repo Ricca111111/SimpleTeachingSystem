@@ -15,6 +15,44 @@
 - **浏览器**：火狐（Firefox）
 - **操作系统**：Windows 11
 
+## 使用方法
+
+### 开发环境准备
+1. **软件需求**：
+    - 后端开发工具：IntelliJ IDEA
+    - 前端开发工具：HBuilder
+    - 数据库：MySQL
+    - 数据库管理工具：Navicat Premium
+    - 浏览器：火狐（Firefox）
+    - 操作系统：Windows 11 或其他兼容系统
+
+2. **依赖安装**：
+    - **后端**：
+        - 使用IntelliJ IDEA打开项目，确保已安装JDK和Maven。
+        - 在项目根目录下运行`mvn clean install`命令，以下载并安装所有Maven依赖。
+    - **前端**：
+        - 使用HBuilder打开前端项目文件夹。
+        - 确保已安装Node.js和npm，在项目根目录下运行`npm install`命令，以下载并安装所有Node.js依赖。
+
+### 项目运行
+
+1. **启动数据库**：
+    - 使用Navicat Premium或其他MySQL管理工具连接到MySQL数据库，确保数据库服务正在运行。
+    - 运行项目中的数据库脚本（sql文件夹下），以创建必要的数据库表和初始数据。
+
+2. **启动后端服务**：
+    - 在IntelliJ IDEA中，右键点击项目中的`Application`类（或包含`main`方法的启动类），选择`Run 'Application'`以启动Spring Boot后端服务。
+    - 后端服务启动后，默认会在`http://localhost:9000`上运行。
+
+3. **启动前端应用**：
+    - 在HBuilder中，右键点击项目根目录或包含`index.html`的文件夹，选择`Run with Live Server`或其他方式启动前端应用。
+    - 前端应用启动后，默认会在指定的端口上运行，并自动打开浏览器访问，推荐使用火狐。
+      ![img_1.png](img_1.png)
+
+4. **访问系统**：
+    - 在浏览器中，输入后端服务的地址（`http://localhost:9000/user/login`），即可访问简易教工系统的登录页面。
+    - 使用系统提供的用户名和密码进行登录，或注册新账号后登录系统。
+
 ## 项目结构
 项目按照功能模块划分为以下几个部分：
 - **用户管理**：实现用户登录、注册和退出功能，保护用户数据和会话信息。
