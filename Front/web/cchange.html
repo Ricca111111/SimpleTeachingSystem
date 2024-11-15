@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改课程信息</title>
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <el-col :offset="7" :span="12">
+                    <el-badge class="item">修改课程信息</el-badge>
+                </el-col>
+            </el-header>
+            <el-main>
+                <el-row>
+                    <el-col :offset="6" :span="12">
+                        <el-form :model="courseForm" :rules="rules" ref="courseForm" ldabel-width="100px" class="demo-ruleForm">
+							<el-form-item label="课程代码" prop="courseCode">
+							    <el-input v-model="courseForm.courseCode"></el-input>
+							</el-form-item>
+							<el-form-item label="课程名称" prop="courseName">
+							    <el-input v-model="courseForm.courseName"></el-input>
+							</el-form-item>
+							<el-form-item label="学分" prop="credit">
+							    <el-input v-model="courseForm.credit"></el-input>
+							</el-form-item>
+							<el-form-item label="课程序号" prop="courseNumber">
+							    <el-input v-model="courseForm.courseNumber"></el-input>
+							</el-form-item>
+                            <el-form-item label="教师" prop="teacher">
+                                <el-input v-model="courseForm.teacher"></el-input>
+                            </el-form-item>
+                            <el-form-item label="详细信息" prop="detail">
+                                <el-input v-model="courseForm.detail"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click.prevent="updateCourse">确认</el-button>
+                                <el-button  @click="re">取消</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+            </el-main>
+        </el-container>
+    </div>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        axios.defaults.withCredentials = true;
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    courseForm:{
+                    	courseCode:'A0800030037',
+                    	courseName:'数值分析',
+                    	credit:'3.5',
+                    	courseNumber:'A070899',
+                    	teacher:'冯男',
+                    	detail:'1-8,1号A407周一1，2节'
+                    },
+                    rules: {
+						courseCode: [
+						    { required: true, message: '请输入课程代码', trigger: 'blur' }
+						],
+						courseName: [
+						    { required: true, message: '请输入课程名称', trigger: 'blur' }
+						],
+						credit: [
+						    { required: true, message: '请输入学分', trigger: 'blur' },
+						    { validator: (rule, value, callback) => {
+						        if (!Number.isInteger(Number(value))) {
+						            callback(new Error('学分必须是数字'));
+						        } else {
+						            callback();
+						        }
+						    }, trigger: 'blur' }
+						],
+                        courseNumber: [
+                            { required: true, message: '请输入课程序号', trigger: 'blur' }
+                        ],
+                        teacher: [
+                            { required: true, message: '请输入教师', trigger: 'blur' }
+                        ],
+						detail: [
+						    { required: true, message: '请输入详细信息', trigger: 'blur' }
+						],
+                        
+                    }
+                };
+            },
+				created() {
+				    const urlParams = new URLSearchParams(window.location.search);
+				    const id = urlParams.get('id');
+				    if (id !== null) {
+				        this.courseForm.id = id;
+				        console.log(id);
+				        this.loadCourse(id);  
+				    } else {
+				        console.log('URL中缺少名为id 的参数或其值为空');
+				    }
+				},
+            methods: {
+                loadCourse(id) {
+                    axios.get('http://localhost:9000/course/cget', { params: { id } })
+                        .then(res => {
+                            if (res.data.isOk) {
+                                this.courseForm = res.data.course;
+                            } else {
+                                this.$message.error('加载课程信息失败');
+                            }
+                        })
+                        .catch(error => {
+                            console.error("加载课程信息失败:", error);
+                            this.$message.error('加载课程信息失败');
+                        });
+                },
+				updateCourse() {
+				                  this.$refs.courseForm.validate((valid) => {
+				                      if (valid) {
+				                          console.log('提交的表单数据:', JSON.stringify(this.courseForm));
+				                          axios.post('http://localhost:9000/course/cupdate', this.courseForm)
+				                              .then(res => {
+				                                  if (res.data.isOk) {
+				                                      this.$message.success(res.data.msg);
+				                                      location.href = 'clist.html';
+				                                  } else {
+				                                      this.$message.error('修改失败，请重试');
+				                                  }
+				                              })
+				                              .catch(err => {
+				                                  console.error('请求出错：', err);
+				                                  this.$message.error('请求出错，请检查控制台');
+				                                  console.log('错误详情:', err.response ? err.response.data : err.message);
+				                              });
+				
+				                      } else {
+				                          console.log('表单验证失败');
+				                          return false;
+				                      }
+				                  });
+				              },
+                re() {
+                    location.href = 'clist.html';
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>

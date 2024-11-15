@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教工系统</title>
+    <script src="https://unpkg.com/vue@3.0.11/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            position: relative;
+        }
+
+        .menu {
+            width: 200px;
+            background-color: #f2f4f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 80vh;
+            /* 纵向拉长菜单栏 */
+        }
+
+        .menu-item {
+            margin-bottom: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+
+        .menu-item:hover {
+            background-color: #e2e8f0;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 80vh;
+            /* 纵向拉长主操作界面 */
+        }
+
+        .header-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            margin-left: 10px;
+        }
+
+        .logout-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            margin-right: 1px;
+            /* 调整退出登录按钮的位置 */
+        }
+
+        .logout-button:hover {
+            color: #ff4500;
+        }
+
+        .main-content img {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+
+        .top-left-img {
+            position: absolute;
+            top: 10px;
+            /* 调整图片的上边距 */
+            left: 10px;
+            /* 调整图片的左边距 */
+            width: 200px;
+            /* 调整图片的宽度 */
+            height: 100px;
+            /* 调整图片的高度 */
+        }
+
+        .right-top-avatar {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="https://gd-hbimg.huaban.com/238b7a64d8c1b25374c213990a0ceb96ce94eaa3109a8-EfVbMM_fw658"
+        alt="Top Left Image" class="top-left-img">
+    <div id="app">
+        <img src="https://www.mgzyfx.com/wp-content/themes/jg-dz/images/avatar.jpg" alt="Avatar"
+            class="right-top-avatar">
+        <div class="menu">
+            <div class="menu-item" @click="selectMenuItem('student')">学生信息管理</div>
+            <div class="menu-item" @click="selectMenuItem('course')">课程信息管理</div>
+            <div class="menu-item" @click="selectMenuItem('notification')">通知管理</div>
+            <div class="menu-item" @click="selectMenuItem('logout')">退出登录</div>
+        </div>
+        <div class="main-content">
+            <div class="header-container">
+                <div class="avatar-container">
+                    <!-- <button class="logout-button" @click="logout">退出登录</button> -->
+                </div>
+            </div>
+            <img src="https://pass.neu.edu.cn/tpass/comm/neu/image/login-pic-02.png" alt="Main Content Image">
+        </div>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    selectedMenuItem: ''
+                };
+            },
+            methods: {
+                selectMenuItem(item) {
+                    this.selectedMenuItem = item;
+                    if (item === 'student') {
+                        window.location.href = 'list.html';
+                    } else if (item === 'course') {
+                        window.location.href = 'clist.html';
+                    } else if (item === 'logout') {
+                        this.logout();
+                    }else if (item === 'notification') {
+                        window.location.href = 'nlist.html';
+                    }
+                },
+                logout() {
+                    // 模拟退出登录的操作
+                    alert('已退出登录');
+                    location.href = 'login.html'; // 重定向到登录页面
+                }
+            }
+        });
+        app.mount('#app');
+    </script>
+</body>
+
+</html>

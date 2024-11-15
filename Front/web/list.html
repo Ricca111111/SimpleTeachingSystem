@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+ <html>
+ <head>
+     <meta charset="utf-8">
+     <title>学生信息管理</title>
+     <!-- 引入 Element UI 样式 -->
+     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+     <style>
+         #app {
+             max-width: 800px;
+             margin: 0 auto;
+             padding: 20px;
+         }
+         .center {
+             text-align: center;
+         }
+         .header-container {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 20px;
+         }
+         .search-container {
+             display: flex;
+             align-items: center;
+         }
+         .search-container > * {
+             margin-left: 10px;
+         }
+         .search-container > .el-select,
+         .search-container > .el-input {
+             flex: none;
+             width: 150px; /* 缩小选择搜索条件的下拉框长度 */
+         }
+         .table-container {
+             margin-top: 20px;
+         }
+         .operation-btns {
+             display: flex;
+             justify-content: space-around;
+             align-items: center;
+         }
+         .operation-btns .el-button {
+             margin: 0;
+         }
+     </style>
+ </head>
+ <body>
+ <div id="app">
+     <div class="header-container">
+		 <a href="homepage.html" class="el-button return-button el-button--primary">返回主页</a>
+         <a href="add.html" class="el-button el-button--primary">添加学生信息</a>
+         <div class="search-container">
+             <el-select v-model="searchType" placeholder="搜索条件" size="mini">
+                 <el-option label="序号" value="sequence"></el-option>
+                 <el-option label="学号" value="studNumber"></el-option>
+                 <el-option label="姓名" value="studName"></el-option>
+                 <el-option label="专业" value="major"></el-option>
+                 <el-option label="班级" value="studClass"></el-option>
+             </el-select>
+             <el-input v-model="keyword" placeholder="请输入关键词" size="mini"></el-input>
+             <el-button type="primary" @click="search" size="mini">搜索</el-button>
+         </div>
+     </div>
+     <div class="table-container">
+         <el-table :data="studs" border style="width: 100%">
+             <el-table-column label="序号" prop="sequence"></el-table-column>
+             <el-table-column label="学号" prop="studNumber"></el-table-column>
+             <el-table-column label="姓名" prop="studName"></el-table-column>
+             <el-table-column label="专业" prop="major"></el-table-column>
+             <el-table-column label="班级" prop="studClass"></el-table-column>
+             <el-table-column label="操作" width="150">
+                 <template slot-scope="scope">
+                     <div class="operation-btns">
+                         <el-button type="primary" size="mini" @click="changeStud(scope.row.sequence)">修改</el-button>
+                         <el-button type="danger" size="mini" @click="delStud(scope.row.sequence)">删除</el-button>
+                     </div>
+                 </template>
+             </el-table-column>
+         </el-table>
+     </div>
+ </div>
+	<script src="../js/axios.min.js"></script>
+	<script src="../js/vue.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+ <script>
+     axios.defaults.withCredentials = true;
+     new Vue({
+         el: '#app',
+         data: {
+             studs: [],
+             searchType: 'sequence',
+             keyword: ''
+         },
+         methods: {
+             loadStuds() {
+                 axios.get('http://localhost:9000/stud/list').then(res => {
+                     if (res.data.isOk) {
+                         this.studs = res.data.studs;
+                     }
+                     //alert(res.data.msg);
+                 })
+             },
+             changeStud(sequence){
+                 location.href = `change.html?sequence=${sequence}`;
+             },
+             delStud(sequence) {
+                 console.log(sequence);
+                 alert('序号为'+sequence+'的学生信息已被删除')
+                 axios.get('http://localhost:9000/stud/del', {
+                     params: {
+                         sequence
+                     }
+                 }).then(res => {
+                     //alert(res.data.msg);
+                     this.loadStuds()
+                 })
+             },
+             search() {
+                 axios.get(`http://localhost:9000/stud/search?searchType=${this.searchType}&keyword=${this.keyword}`).then(res => {
+                     if (res.data.isOk) {
+                         this.studs = res.data.studs;
+                     } else {
+                         alert(res.data.msg);
+                     }
+                 }).catch(error => {
+                     console.error("搜索失败:", error);
+                     alert('搜索失败，请检查控制台');
+                 });
+             }
+         },
+         created() {
+             this.loadStuds();
+         }
+     })
+ </script>
+ </body>
+ </html>
+
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>发布通知</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #app {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .el-form-item__label {
+            width: 80px;
+        }
+        .el-form-item__content {
+            width: 200px; /* 调整输入框宽度 */
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-form :model="notiForm" :rules="rules" ref="notiForm" label-width="80px">
+        <el-form-item label="分类" prop="notiKind">
+            <el-select v-model="notiForm.notiKind" placeholder="请选择分类" size="small">
+                <el-option label="活动安排" value="活动安排"></el-option>
+                <el-option label="赛事安排" value="赛事安排"></el-option>
+                <el-option label="温馨提示" value="温馨提示"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="内容" prop="notiContent">
+            <el-input v-model="notiForm.notiContent" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="时间" prop="time">
+            <el-input v-model="notiForm.time" size="small"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('notiForm')" size="small">添加</el-button>
+            <el-button @click="goToListPage" size="small">取消</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+
+<script src="../js/axios.min.js"></script>
+<script src="../js/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script>
+    axios.defaults.withCredentials = true;
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                notiForm: {
+                    notiKind: '',
+                    notiContent: '此为2024年全国大学生数学建模竞赛及2025年国际（美国）大学生数学建模竞赛校内选拔赛。请同学们关注参与，相互提醒，不要错过！',
+                    time: '2024.5.25'
+                },
+                rules: {
+                    notiKind: [
+                        { required: true, message: '请选择分类', trigger: 'blur' },
+                    ],
+                    notiContent: [
+                        { required: true, message: '请输入内容', trigger: 'blur' },
+                    ],
+                    time: [
+                        { required: true, message: '请输入时间', trigger: 'blur' },
+                    ]
+                }
+            }
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let fd = new FormData();
+                        fd.append('notiKind', this.notiForm.notiKind);
+                        fd.append('notiContent', this.notiForm.notiContent);
+                        fd.append('time', this.notiForm.time);
+                        axios.post('http://localhost:9000/noti/nadd', fd).then(res => {
+                            if (res.data.isOk) {
+                                this.$message.success(res.data.msg);
+                                location.href = 'nlist.html';
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    } else {
+                        this.$message.error('请检查输入内容是否正确');
+                        return false;
+                    }
+                });
+            },
+            goToListPage() {
+                location.href = 'nlist.html';
+            }
+        }
+    })
+</script>
+</body>
+</html>

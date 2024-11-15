@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课表安排</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/vue@3.0.11/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/element-plus/lib/index.full.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        h1 {
+            color: #333;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+        .course {
+            background-color: #c8e6c9;
+        }
+        .first-col {
+            width: 150px;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #333;
+            font-size: 16px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .back-button i {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>课表安排</h1>
+    <a href="clist.html" class="back-button">
+        <i class="el-icon-arrow-left"></i>
+        返回
+    </a>
+    <table>
+    <table>
+        <thead>
+            <tr>
+                <th class="first-col">节次/周次</th>
+                <th>星期日</th>
+                <th>星期一</th>
+                <th>星期二</th>
+                <th>星期三</th>
+                <th>星期四</th>
+                <th>星期五</th>
+                <th>星期六</th>
+            </tr>
+        </thead>
+        <tbody>
+         <tr>
+             <td rowspan="2" class="first-col">第一节<br>第二节</td>
+             <td></td>
+             <td class="course">操作系统(A074486) (石凯)<br>(1-8, 1号A405(浑南校区))</td>
+             <td class="course">数据库概论(A074490) (黄利萍)<br>(9-16, 1号A405(浑南校区))</td>
+             <td></td>
+             <td class="course">软件系统开发实训(A074505) (刘淼博, 李昕, 吴辰铌)<br>(17, 信息A408(100人)(浑南校区))</td>
+             <td></td>
+             <td></td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td rowspan="2" class="first-col">第三节<br>第四节</td>
+             <td></td>
+             <td class="course">数值分析(A075059) (冯男)<br>(9-16, 1号A105(浑南校区))</td>
+             <td class="course">数值分析(A075059) (冯男)<br>(1-2 8, 文管A227(浑南校区))</td>
+             <td></td>
+             <td class="course">计算机网络(A074488) (李昕)<br>(1-4, 1号A404(浑南校区))</td>
+             <td class="course">人机交互的软件工程方法(A074492) (吴辰铌)<br>(7-8, 信息B612(100)(浑南校区))</td>
+             <td class="course">数值分析(A075059) (冯男)<br>(1-8, 1号A303(浑南校区))</td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td rowspan="2" class="first-col">第五节<br>第六节</td>
+             <td class="course">数据库概论(A074490) (黄利萍)<br>(12-15, 信息A101(浑南校区))</td>
+             <td></td>
+             <td></td>
+             <td class="course">人工智能与信息社会（在线式）(A077079) (超星平台网络教师, 闻时光)<br>(5, 1号A303(浑南校区))</td>
+             <td></td>
+             <td class="course">改革开放史(A075973) (赵亮)<br>(1-8, 文管A447(浑南校区))</td>
+             <td></td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td rowspan="2" class="first-col">第七节<br>第八节</td>
+             <td class="course">软件创新方法与实例(A074484) (赵相国, 王蓓蕾, 宋杰, 郭朝鹏)<br>(1-8, 1号A402(浑南校区))</td>
+             <td></td>
+             <td></td>
+             <td class="course">人机交互的软件工程方法(A074492) (吴辰铌)<br>(3-6, 1号A405(浑南校区))</td>
+             <td class="course">人机交互的软件工程方法(A074492) (吴辰铌)<br>(7-8, 信息B612(100)(浑南校区))</td>
+             <td></td>
+             <td></td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td rowspan="2" class="first-col">第九节<br>第十节</td>
+             <td></td>
+             <td class="course">软件创新方法与实例(A074484) (赵相国, 王蓓蕾, 宋杰, 郭朝鹏)<br>(12-13, 信息A101(浑南校区))</td>
+             <td></td>
+             <td class="course">计算机网络(A074488) (李昕)<br>(1-4 6-8, 信息A101(浑南校区))</td>
+             <td></td>
+             <td></td>
+             <td></td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td rowspan="2" class="first-col">第十一节<br>第十二节</td>
+             <td colspan="6"></td>
+         </tr>
+         <tr>
+             <td colspan="6"></td>
+         </tr>
+        </tbody>
+    </table>
+    <script>
+        const app = Vue.createApp({
+            methods: {
+                goBack() {
+                    window.history.back();
+                }
+            }
+        });
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>课程信息管理</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #app {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .center {
+            text-align: center;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        .search-container > * {
+            margin-left: 10px;
+        }
+        .search-container > .el-select,
+        .search-container > .el-input {
+            flex: none;
+            width: 150px; /* 缩小选择搜索条件的下拉框长度 */
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .operation-btns {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .operation-btns .el-button {
+            margin: 0;
+        }
+        /* 返回按钮样式 */
+        .return-button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="header-container">
+        <!-- 添加返回按钮 -->
+        <a href="homepage.html" class="el-button return-button el-button--primary">返回主页</a>
+        <a href="cadd.html" class="el-button el-button--primary">添加课程信息</a>
+        <a href="coursetable.html" class="el-button el-button--primary">查看课程表</a>
+        <div class="search-container">
+            <el-select v-model="searchType" placeholder="搜索条件" size="mini">
+                <el-option label="序号" value="id"></el-option>
+                <el-option label="课程代码" value="courseCode"></el-option>
+                <el-option label="课程名称" value="courseName"></el-option>
+                <el-option label="学分" value="credit"></el-option>
+                <el-option label="课程序号" value="courseNumber"></el-option>
+                <el-option label="教师" value="teacher"></el-option>
+                <el-option label="详细信息" value="detail"></el-option>
+            </el-select>
+            <el-input v-model="keyword" placeholder="请输入关键词" size="mini"></el-input>
+            <el-button type="primary" @click="search" size="mini">搜索</el-button>
+        </div>
+    </div>
+    <div class="table-container">
+        <el-table :data="courses" border style="width: 100%">
+            <el-table-column label="序号" prop="id" width="50"></el-table-column>
+            <el-table-column label="课程代码" prop="courseCode" width="100"></el-table-column>
+            <el-table-column label="课程名称" prop="courseName" width="200"></el-table-column>
+            <el-table-column label="学分" prop="credit" width="100"></el-table-column>
+            <el-table-column label="课程序号" prop="courseNumber" width="100"></el-table-column>
+            <el-table-column label="教师" prop="teacher" width="100"></el-table-column>
+            <el-table-column label="详细信息" prop="detail" width="300"></el-table-column>
+            <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                    <div class="operation-btns">
+                        <el-button type="primary" size="mini" @click="changeCourse(scope.row.id)">修改</el-button>
+                        <el-button type="danger" size="mini" @click="delCourse(scope.row.id)">删除</el-button>
+                    </div>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
+
+<script src="../js/axios.min.js"></script>
+<script src="../js/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    axios.defaults.withCredentials = true;
+    new Vue({
+        el: '#app',
+        data: {
+            courses: [],
+            searchType: 'id',
+            keyword: ''
+        },
+        methods: {
+            loadCourses() {
+                axios.get('http://localhost:9000/course/clist').then(res => {
+                    if (res.data.isOk) {
+                        this.courses = res.data.courses;
+                    }
+                }).catch(error => {
+                    console.error("加载课程失败:", error);
+                    alert('加载课程失败，请检查控制台');
+                });
+            },
+            changeCourse(id) {
+                location.href = `cchange.html?id=${id}`;
+            },
+            delCourse(id) {
+                console.log(id);
+                alert('序号为' + id + '的课程信息已被删除');
+                axios.get('http://localhost:9000/course/cdel', {
+                    params: {
+                        id
+                    }
+                }).then(res => {
+                    alert(res.data.msg);
+                    this.loadCourses();
+                }).catch(error => {
+                    console.error("删除课程失败:", error);
+                    alert('删除课程失败，请检查控制台');
+                });
+            },
+            search() {
+                axios.get(`http://localhost:9000/course/csearch?searchType=${this.searchType}&keyword=${this.keyword}`).then(res => {
+                    if (res.data.isOk) {
+                        this.courses = res.data.courses;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.error("搜索失败:", error);
+                    alert('搜索失败，请检查控制台');
+                });
+            }
+        },
+        created() {
+            this.loadCourses();
+        }
+    })
+</script>
+</body>
+</html>
+

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>修改通知</title>
+		<style>
+			.center {
+				text-align: center;
+			}
+		</style>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+	</head>
+	<body>
+		<div id="app">
+			<el-container>
+				<el-header>
+					<el-col :offset="7" :span="12">
+						<el-badge class="item">修改通知</el-badge>
+					</el-col>
+				</el-header>
+				<el-main>
+					<el-row>
+						<el-col :offset="6" :span="12">
+							<el-form :model="notiForm" :rules="rules" ref="notiForm" ldabel-width="100px"
+								class="demo-ruleForm">
+								<el-form-item label="分类" prop="notiKind">
+									<el-select v-model="notiForm.notiKind" placeholder="请选择分类" size="small">
+										<el-option label="活动安排" value="活动安排"></el-option>
+										<el-option label="赛事安排" value="赛事安排"></el-option>
+										<el-option label="温馨提示" value="温馨提示"></el-option>
+									</el-select>
+								</el-form-item>
+								<el-form-item label="内容" prop="notiContent">
+									<el-input v-model="notiForm.notiContent" size="small"></el-input>
+								</el-form-item>
+								<el-form-item label="时间" prop="time">
+									<el-input v-model="notiForm.time" size="small"></el-input>
+								</el-form-item>
+								<el-form-item>
+									<el-button type="primary" @click.prevent="updateNoti">确认</el-button>
+									<el-button @click="re">取消</el-button>
+								</el-form-item>
+							</el-form>
+						</el-col>
+					</el-row>
+				</el-main>
+			</el-container>
+		</div>
+		<script src="../js/axios.min.js"></script>
+		<script src="../js/vue.js"></script>
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<script>
+			axios.defaults.withCredentials = true;
+			new Vue({
+				el: '#app',
+				data() {
+					return {
+						notiForm: {
+							notiKind: '',
+							notiContent: '',
+							time: ''
+						},
+						rules: {
+							notiKind: [{
+								required: true,
+								message: '请选择分类',
+								trigger: 'blur'
+							}, ],
+							notiContent: [{
+								required: true,
+								message: '请输入内容',
+								trigger: 'blur'
+							}, ],
+							time: [{
+								required: true,
+								message: '请输入时间',
+								trigger: 'blur'
+							}, ]
+						}
+					};
+				},
+				created() {
+					const urlParams = new URLSearchParams(window.location.search);
+					const id = urlParams.get('id');
+					if (id !== null) {
+						this.notiForm.id = id;
+						console.log(id);
+						this.loadNoti(id);
+					} else {
+						console.log('URL中缺少名为id 的参数或其值为空');
+					}
+				},
+				methods: {
+					loadNoti(id) {
+						axios.get('http://localhost:9000/noti/nget', {
+								params: {
+									id
+								}
+							})
+							.then(res => {
+								if (res.data.isOk) {
+									this.notiForm = res.data.noti;
+								} else {
+									this.$message.error('加载学生信息失败');
+								}
+							})
+							.catch(error => {
+								console.error("加载学生信息失败:", error);
+								this.$message.error('加载学生信息失败');
+							});
+					},
+					/* updateNoti() {
+                                  console.log('update');
+                                  this.$refs.notiForm.validate((valid) => {
+                                      if (valid) {
+                                          let fd = new FormData();
+                                          fd.append('notiNumber', this.notiForm.notiNumber);
+                                          fd.append('notiName', this.notiForm.notiName);
+                                          fd.append('major', this.notiForm.major);
+                                          fd.append('notiClass', this.notiForm.notiClass);
+                                          console.log('FormData:', fd);
+                                          axios.post('http://localhost:9000/noti/update', fd).then(res => {
+                                              if (res.data.isOk) {
+                                                  this.$message.success(res.data.msg); // 提示用户修改成功
+                                                  location.href = 'list.html';
+                                              } else {
+                                                  this.$message.error('修改失败，请重试');
+												  this.$message.success(res.data.msg); 
+                                              }
+                                          }).catch(err => {
+                                              console.error('请求出错：', err);
+                                              this.$message.error('请求出错，请检查控制台');
+                                          });
+                                      } else {
+                                          console.log('表单验证失败');
+                                          return false;
+                                      }
+                                  });
+                              },*/
+					updateNoti() {
+						this.$refs.notiForm.validate((valid) => {
+							if (valid) {
+								console.log('提交的表单数据:', JSON.stringify(this.notiForm));
+								axios.post('http://localhost:9000/noti/nupdate', this.notiForm)
+									.then(res => {
+										if (res.data.isOk) {
+											this.$message.success(res.data.msg);
+											location.href = 'nlist.html';
+										} else {
+											this.$message.error('修改失败，请重试');
+										}
+									})
+									.catch(err => {
+										console.error('请求出错：', err);
+										this.$message.error('请求出错，请检查控制台');
+										console.log('错误详情:', err.response ? err.response.data : err.message);
+									});
+
+							} else {
+								console.log('表单验证失败');
+								return false;
+							}
+						});
+					},
+					re() {
+						location.href = 'nlist.html';
+					}
+				}
+
+			});
+		</script>
+	</body>
+</html>

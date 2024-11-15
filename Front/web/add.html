@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加学生信息</title>
+    <!-- 引入 Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #app {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .el-form-item__label {
+            width: 80px;
+        }
+        .el-form-item__content {
+            width: 200px; /* 调整输入框宽度 */
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-form :model="studForm" :rules="rules" ref="studForm" label-width="80px">
+        <el-form-item label="学号" prop="studNumber">
+            <el-input v-model="studForm.studNumber" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名" prop="studName">
+            <el-input v-model="studForm.studName" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="专业" prop="major">
+            <el-input v-model="studForm.major" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="班级" prop="studClass">
+            <el-input v-model="studForm.studClass" size="small"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="submitForm('studForm')" size="small">添加</el-button>
+            <el-button @click="goToListPage" size="small">取消</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+
+<script src="../js/axios.min.js"></script>
+<script src="../js/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<script>
+    axios.defaults.withCredentials = true;
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                studForm: {
+                    studNumber: '20226584',
+                    studName: '王小琦',
+                    major: '数字媒体',
+                    studClass: '2205',
+                },
+                rules: {
+                    studNumber: [
+                        { required: true, message: '请输入学号', trigger: 'blur' },
+                        { pattern: /^[0-9]{8}$/, message: '学号应为8位数字', trigger: 'blur' }
+                    ],
+                    studName: [
+                        { required: true, message: '请输入姓名', trigger: 'blur' },
+                    ],
+                    major: [
+                        { required: true, message: '请输入专业', trigger: 'blur' },
+                    ],
+                    studClass: [
+                        { required: true, message: '请输入班级', trigger: 'blur' },
+                    ]
+                }
+            }
+        },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let fd = new FormData();
+                        fd.append('studNumber', this.studForm.studNumber);
+                        fd.append('studName', this.studForm.studName);
+                        fd.append('major', this.studForm.major);
+                        fd.append('studClass', this.studForm.studClass);
+                        axios.post('http://localhost:9000/stud/add', fd).then(res => {
+                            if (res.data.isOk) {
+                                this.$message.success(res.data.msg);
+                                location.href = 'list.html';
+                            } else {
+                                this.$message.error(res.data.msg);
+                            }
+                        })
+                    } else {
+                        this.$message.error('请检查输入内容是否正确');
+                        return false;
+                    }
+                });
+            },
+            goToListPage() {
+                location.href = 'list.html';
+            }
+        }
+    })
+</script>
+</body>
+</html>

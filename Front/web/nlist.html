@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>通知管理</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        #app {
+            max-width: 1200px; /* 将最大宽度增加到1200px */
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .center {
+            text-align: center;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        .search-container > * {
+            margin-left: 10px;
+        }
+        .search-container > .el-select,
+        .search-container > .el-input {
+            flex: none;
+            width: 150px; /* 缩小选择搜索条件的下拉框长度 */
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .operation-btns {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .operation-btns .el-button {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="header-container">
+        <a href="nadd.html" class="el-button el-button--primary">发布新通知</a>
+        <a href="homepage.html" class="el-button return-button el-button--primary">返回主页</a>
+        <div class="search-container">
+            <el-select v-model="searchType" placeholder="搜索条件" size="mini">
+                <el-option label="序号" value="id"></el-option>
+                <el-option label="分类" value="notiKind"></el-option>
+                <el-option label="内容" value="notiContent"></el-option>
+                <el-option label="时间" value="time"></el-option>
+            </el-select>
+            <el-input v-model="keyword" placeholder="请输入关键词" size="mini"></el-input>
+            <el-button type="primary" @click="search" size="mini">搜索</el-button>
+        </div>
+    </div>
+    <div class="table-container">
+        <el-table :data="notis" border style="width: 100%">
+            <el-table-column label="序号" prop="id" width="80"></el-table-column>
+            <el-table-column label="分类" prop="notiKind" width="150"></el-table-column>
+            <el-table-column label="内容" prop="notiContent" width="600"></el-table-column>
+            <el-table-column label="时间" prop="time" width="200"></el-table-column>
+            <el-table-column label="操作" width="150">
+                <template slot-scope="scope">
+                    <div class="operation-btns">
+                        <el-button type="primary" size="mini" @click="changeNoti(scope.row.id)">修改</el-button>
+                        <el-button type="danger" size="mini" @click="delNoti(scope.row.id)">删除</el-button>
+                    </div>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
+<script src="../js/axios.min.js"></script>
+<script src="../js/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    axios.defaults.withCredentials = true;
+    new Vue({
+        el: '#app',
+        data: {
+            notis: [],
+            searchType: 'id',
+            keyword: ''
+        },
+        methods: {
+            loadNotis() {
+                axios.get('http://localhost:9000/noti/nlist').then(res => {
+                    if (res.data.isOk) {
+                        this.notis = res.data.notis;
+                    }
+                    //alert(res.data.msg);
+                })
+            },
+            changeNoti(id) {
+                location.href = `nchange.html?id=${id}`;
+            },
+            delNoti(id) {
+                console.log(id);
+                alert('序号为' + id + '的通知信息已被删除');
+                axios.get('http://localhost:9000/noti/ndel', {
+                    params: {
+                        id
+                    }
+                }).then(res => {
+                    //alert(res.data.msg);
+                    this.loadNotis();
+                })
+            },
+            search() {
+                axios.get(`http://localhost:9000/noti/nsearch?searchType=${this.searchType}&keyword=${this.keyword}`).then(res => {
+                    if (res.data.isOk) {
+                        this.notis = res.data.notis;
+                    } else {
+                        alert(res.data.msg);
+                    }
+                }).catch(error => {
+                    console.error("搜索失败:", error);
+                    alert('搜索失败，请检查控制台');
+                });
+            }
+        },
+        created() {
+            this.loadNotis();
+        }
+    })
+</script>
+</body>
+</html>

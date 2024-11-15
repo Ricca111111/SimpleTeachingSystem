@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: relative;
+            text-align: center; /* Center text horizontally */
+        }
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            margin-left: 400px; /* Move form to the right */
+        }
+        .top-left-image {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 200px;
+        }
+        .bottom-center-image {
+            position: absolute;
+            bottom: 180px; /* Adjusted bottom position */
+            left: 30%;
+            transform: translateX(-50%);
+            width: 800px; /* Increased size */
+        }
+        .welcome-message {
+            position: absolute;
+            top: 50px; /* Adjusted top position */
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px; /* Increased font size */
+            color: #333; /* Darker color */
+            font-weight: bold; /* Bold text */
+        }
+    </style>
+</head>
+<body>
+    <img src="https://gd-hbimg.huaban.com/238b7a64d8c1b25374c213990a0ceb96ce94eaa3109a8-EfVbMM_fw658" alt="Top Left Image" class="top-left-image">
+    <div class="welcome-message">欢迎来到简易教工系统</div>
+    <img src="https://pass.neu.edu.cn/tpass/comm/neu/image/login-pic-04.png" alt="Bottom Center Image" class="bottom-center-image">
+    <div id="app" class="form-container">
+        <el-row>
+            <el-col :offset="0" :span="24">
+                <el-form :model="userForm" :rules="rules" ref="userForm" label-width="100px" class="demo-ruleForm">
+                    <el-form-item label="电话" prop="tel">
+                        <el-input v-model="userForm.tel"></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="loginPwd">
+                        <el-input type="password" v-model="userForm.loginPwd"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click.prevent="register">注册</el-button>
+                        <el-button type="primary" @click.prevent="login">登录</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-col>
+        </el-row>
+    </div>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        axios.defaults.withCredentials = true;
+        new Vue({
+            el: '#app',
+            data: {
+                userForm: {
+                    tel: '15556987421',
+                    loginPwd: '123456'
+                },
+                rules: {
+                    tel: [
+                        { required: true, message: '电话不能为空', trigger: 'blur' }
+                    ],
+                    loginPwd: [
+                        { required: true, message: '密码不能为空', trigger: 'blur' }
+                    ]
+                }
+            },
+            methods: {
+                login() {
+                    this.$refs.userForm.validate((valid) => {
+                        if (valid) {
+                            let fd = new FormData();
+                            fd.append('tel', this.userForm.tel);
+                            fd.append('loginPwd', this.userForm.loginPwd);
+                            axios.post('http://localhost:9000/user/login', fd).then(res => {
+                                console.log('Response:', res);
+                                if (res.data.isOk) {
+                                    this.$message({message: res.data.msg, type: 'success'});
+                                    location.href = 'homepage.html';
+                                } else {
+                                    this.$message({message: res.data.msg, type: 'error'});
+                                }
+                            });
+                        } else {
+                            return false;
+                        }
+                    });
+                },
+                register() {
+                    location.href = 'register.html';
+                },
+            }
+        });
+    </script>
+</body>
+</html>
+

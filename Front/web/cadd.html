@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>添加课程信息</title>
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<style>
+			#app {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
+
+			.el-form-item__label {
+				width: 80px;
+			}
+
+			.el-form-item__content {
+				width: 300px;
+				/* 调整输入框宽度 */
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<el-form :model="courseForm" :rules="rules" ref="courseForm" label-width="80px">
+				<el-form-item label="课程代码" prop="courseCode">
+					<el-input v-model="courseForm.courseCode" size="small"></el-input>
+				</el-form-item>
+				<el-form-item label="课程名称" prop="courseName">
+					<el-input v-model="courseForm.courseName" size="small"></el-input>
+				</el-form-item>
+				<el-form-item label="学分" prop="credit">
+					<el-input v-model="courseForm.credit" size="small"></el-input>
+				</el-form-item>
+				<el-form-item label="课程序号" prop="courseNumber">
+					<el-input v-model="courseForm.courseNumber" size="small"></el-input>
+				</el-form-item>
+				<el-form-item label="教师" prop="teacher">
+					<el-input v-model="courseForm.teacher" size="small"></el-input>
+				</el-form-item>
+				<el-form-item label="详细信息" prop="detail">
+					<el-input v-model="courseForm.detail" size="small"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="submitForm('courseForm')" size="small">添加</el-button>
+					<el-button @click="goToListPage" size="small">取消</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+
+		<script src="../js/axios.min.js"></script>
+		<script src="../js/vue.js"></script>
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+		<script>
+			axios.defaults.withCredentials = true;
+			new Vue({
+				el: '#app',
+				data() {
+					return {
+						courseForm: {
+							courseCode: 'A3507000026',
+							courseName: '改革开放史',
+							credit: '1',
+							courseNumber: 'A075973',
+							teacher: '赵亮',
+							detail: '1-5,1号A402周二7，8节'
+						},
+						rules: {
+							courseCode: [{
+								required: true,
+								message: '请输入课程代码',
+								trigger: 'blur'
+							}],
+							courseName: [{
+								required: true,
+								message: '请输入课程名称',
+								trigger: 'blur'
+							}],
+							credit: [{
+									required: true,
+									message: '请输入学分',
+									trigger: 'blur'
+								},
+								{
+									validator: (rule, value, callback) => {
+										if (!value) {
+											callback(new Error('请输入学分'));
+										} else if (isNaN(value)) {
+											callback(new Error('学分必须是数字'));
+										} else {
+											callback();
+										}
+									},
+									trigger: 'blur'
+								}
+							],
+							courseNumber: [{
+								required: true,
+								message: '请输入课程序号',
+								trigger: 'blur'
+							}],
+							teacher: [{
+								required: true,
+								message: '请输入教师姓名',
+								trigger: 'blur'
+							}],
+							detail: [{
+								required: true,
+								message: '请输入详细信息',
+								trigger: 'blur'
+							}]
+						}
+					}
+				},
+				methods: {
+					submitForm(formName) {
+						this.$refs[formName].validate((valid) => {
+							if (valid) {
+								let fd = new FormData();
+								fd.append('courseCode', this.courseForm.courseCode);
+								fd.append('courseName', this.courseForm.courseName);
+								fd.append('credit', this.courseForm.credit);
+								fd.append('courseNumber', this.courseForm.courseNumber);
+								fd.append('teacher', this.courseForm.teacher);
+								fd.append('detail', this.courseForm.detail);
+								axios.post('http://localhost:9000/course/cadd', fd).then(res => {
+									if (res.data.isOk) {
+										this.$message.success(res.data.msg);
+										location.href = 'clist.html';
+									} else {
+										this.$message.error(res.data.msg);
+									}
+								}).catch(error => {
+									console.error("添加课程失败:", error);
+									this.$message.error('添加课程失败，请检查控制台');
+								});
+							} else {
+								this.$message.error('请检查输入内容是否正确');
+								return false;
+							}
+						});
+					},
+					goToListPage() {
+						location.href = 'clist.html';
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

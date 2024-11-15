@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改学生信息</title>
+    <style>
+        .center {
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <el-col :offset="7" :span="12">
+                    <el-badge class="item">修改学生信息</el-badge>
+                </el-col>
+            </el-header>
+            <el-main>
+                <el-row>
+                    <el-col :offset="6" :span="12">
+                        <el-form :model="studForm" :rules="rules" ref="studForm" ldabel-width="100px" class="demo-ruleForm">
+							<el-form-item label="学号" prop="studNumber">
+							    <el-input v-model="studForm.studNumber"></el-input>
+							</el-form-item>
+                            <el-form-item label="姓名" prop="studName">
+                                <el-input v-model="studForm.studName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="专业" prop="major">
+                                <el-input v-model="studForm.major"></el-input>
+                            </el-form-item>
+                            <el-form-item label="班级" prop="studClass">
+                                <el-input v-model="studForm.studClass"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click.prevent="updateStud">确认</el-button>
+                                <el-button  @click="re">取消</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+            </el-main>
+        </el-container>
+    </div>
+    <script src="../js/axios.min.js"></script>
+    <script src="../js/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        axios.defaults.withCredentials = true;
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    studForm: {
+						sequence:'',
+                        studNumber: '',
+                        studName: '',
+                        major: '',
+                        studClass: ''
+                    },
+                    rules: {
+						studNumber: [
+						    { required: true, message: '请输入学号', trigger: 'blur' },
+						    { pattern: /^[0-9]{8}$/, message: '学号应为8位数字', trigger: 'blur' }
+						],
+                        studName: [
+                            { required: true, message: '请输入姓名', trigger: 'blur' }
+                        ],
+                        major: [
+                            { required: true, message: '请输入专业', trigger: 'blur' }
+                        ],
+                        studClass: [
+                            { required: true, message: '请输入班级', trigger: 'blur' },
+                            { validator: (rule, value, callback) => {
+                                if (!Number.isInteger(Number(value))) {
+                                    callback(new Error('班级必须是数字'));
+                                } else {
+                                    callback();
+                                }
+                            }, trigger: 'blur' }
+                        ]
+                    }
+                };
+            },
+				created() {
+				    const urlParams = new URLSearchParams(window.location.search);
+				    const sequence = urlParams.get('sequence');
+				    if (sequence !== null) {
+				        this.studForm.sequence = sequence;
+				        console.log(sequence);
+				        this.loadStud(sequence);  
+				    } else {
+				        console.log('URL中缺少名为sequence 的参数或其值为空');
+				    }
+				},
+            methods: {
+                loadStud(sequence) {
+                    axios.get('http://localhost:9000/stud/get', { params: { sequence } })
+                        .then(res => {
+                            if (res.data.isOk) {
+                                this.studForm = res.data.stud;
+                            } else {
+                                this.$message.error('加载学生信息失败');
+                            }
+                        })
+                        .catch(error => {
+                            console.error("加载学生信息失败:", error);
+                            this.$message.error('加载学生信息失败');
+                        });
+                },
+              /* updateStud() {
+                                  console.log('update');
+                                  this.$refs.studForm.validate((valid) => {
+                                      if (valid) {
+                                          let fd = new FormData();
+                                          fd.append('studNumber', this.studForm.studNumber);
+                                          fd.append('studName', this.studForm.studName);
+                                          fd.append('major', this.studForm.major);
+                                          fd.append('studClass', this.studForm.studClass);
+                                          console.log('FormData:', fd);
+                                          axios.post('http://localhost:9000/stud/update', fd).then(res => {
+                                              if (res.data.isOk) {
+                                                  this.$message.success(res.data.msg); // 提示用户修改成功
+                                                  location.href = 'list.html';
+                                              } else {
+                                                  this.$message.error('修改失败，请重试');
+												  this.$message.success(res.data.msg); 
+                                              }
+                                          }).catch(err => {
+                                              console.error('请求出错：', err);
+                                              this.$message.error('请求出错，请检查控制台');
+                                          });
+                                      } else {
+                                          console.log('表单验证失败');
+                                          return false;
+                                      }
+                                  });
+                              },*/
+				updateStud() {
+				                  this.$refs.studForm.validate((valid) => {
+				                      if (valid) {
+				                          console.log('提交的表单数据:', JSON.stringify(this.studForm));
+				                          axios.post('http://localhost:9000/stud/update', this.studForm)
+				                              .then(res => {
+				                                  if (res.data.isOk) {
+				                                      this.$message.success(res.data.msg);
+				                                      location.href = 'list.html';
+				                                  } else {
+				                                      this.$message.error('修改失败，请重试');
+				                                  }
+				                              })
+				                              .catch(err => {
+				                                  console.error('请求出错：', err);
+				                                  this.$message.error('请求出错，请检查控制台');
+				                                  console.log('错误详情:', err.response ? err.response.data : err.message);
+				                              });
+				
+				                      } else {
+				                          console.log('表单验证失败');
+				                          return false;
+				                      }
+				                  });
+				              },
+                re() {
+                    location.href = 'list.html';
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>

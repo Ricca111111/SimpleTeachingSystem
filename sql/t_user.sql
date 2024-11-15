@@ -1,0 +1,16 @@
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (1, '15556987421', '123456', '李四');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (2, '18843005698', '123456', '张三');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (3, '15555555555', '111111', '王五');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (4, '12344444444', '111111', '赵四');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (5, '14444444444', '111111', '李六');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (6, '19999999999', '123456', '赵磊');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (7, '1999999999', '111111', '王晓');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (8, '18855552222', '111111', '王欧克');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (9, '1999999977', '111111', '王晓');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (10, '18855552225', '111111', '王里');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (11, '19999955555', '111111 ', '王云南');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (12, '15555558888', '111116', '王小七');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (13, '14569874564', '111111', '王44');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (14, '15566663333', '111111', '王小六');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (15, '19999888888', '111111', '王晓');
+INSERT INTO `t_user` (`userid`, `tel`, `loginpwd`, `userName`) VALUES (16, '19922223444', '111111', '李六');
